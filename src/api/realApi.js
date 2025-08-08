@@ -90,4 +90,13 @@ export const api = {
   sendMessage: (data) => request("/chat/send/", "POST", data),
   getMessages: (productId) => request(`/chat/messages/${productId}/`),
   getChatList: () => request("/chat/conversations/"),
+
+
+  // 购物车相关
+  getCart: () => request("/cart/", "GET"),
+  addToCart: (productId) => request("/cart/add/", "POST", { product_id: productId }),
+  removeFromCart: (productId) => request(`/cart/remove/${productId}/`, "DELETE"),
+  placeCartOrder: () => request("/cart/order/", "POST"),
+
+
 };

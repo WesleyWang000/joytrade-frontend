@@ -11,6 +11,8 @@ import PostProductPage from "./pages/PostProductPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import EditProductPage from "./pages/EditProductPage";
+import CartPage from "./pages/CartPage";
+
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -147,6 +149,10 @@ function App() {
       );
     }
 
+    if (currentPage === "cart") {
+      return <CartPage onSelectProduct={handleSelectProduct} />;
+    }
+
     return <div className="p-6">Page not found.</div>;
   };
 
@@ -186,7 +192,7 @@ function App() {
               className="text-sm text-gray-700 hover:text-indigo-600 mx-2"
               onClick={() => setCurrentPage("chat")}
             >
-              Chat
+              Conversations
             </button>
           )}
           <button
@@ -195,6 +201,15 @@ function App() {
           >
             Orders
           </button>
+
+          {currentUser && (
+            <button
+              className="text-sm text-gray-700 hover:text-indigo-600 mx-2"
+              onClick={() => setCurrentPage("cart")}
+            >
+              Cart
+            </button>
+          )}
 
           {currentUser && (
             <button

@@ -43,6 +43,15 @@ function ProductDetailPage({ productId, onBack, onStartChat, currentUser }) {
     }
   };
 
+  const addToCart = async () => {
+    try {
+      await api.addToCart(productId);
+      alert("Added to cart");
+    } catch (err) {
+      alert("Add to cart failed: " + err.message);
+    }
+  };
+
   if (error) return <p className="p-6 text-red-500">{error}</p>;
   if (!product) return <p className="p-6">Loading...</p>;
 
@@ -130,6 +139,14 @@ function ProductDetailPage({ productId, onBack, onStartChat, currentUser }) {
               >
                 Chat
               </button>
+
+              <button
+                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                onClick={addToCart}
+              >
+                Add to Cart
+              </button>
+
             </>
           )
         ) : (
