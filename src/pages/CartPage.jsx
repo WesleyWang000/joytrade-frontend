@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/realApi";
 
-function CartPage({ onSelectProduct }) {
+function CartPage({ onSelectProduct, onCartChange }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,6 +27,7 @@ function CartPage({ onSelectProduct }) {
     try {
       await api.removeFromCart(productId);
       setCart(cart.filter((item) => item.product.id !== productId));
+      onCartChange && onCartChange();
     } catch (err) {
       alert("Failed to remove: " + err.message);
     }
@@ -38,6 +39,8 @@ function CartPage({ onSelectProduct }) {
     try {
       const res = await api.placeCartOrder();
       alert(`Order placed for: ${res.ordered.join(", ")}`);
+      setItems([]);                   
+      onCartChange && onCartChange();
       fetchCart();
     } catch (err) {
       alert("Failed to place order: " + err.message);

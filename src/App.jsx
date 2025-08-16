@@ -21,6 +21,8 @@ function App() {
   const [chatProductId, setChatProductId] = useState(null);
   const [chatReceiver, setChatReceiver] = useState(null);
   const [editingProductId, setEditingProductId] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
+
 
   useEffect(() => {
     const init = async () => {
@@ -37,10 +39,28 @@ function App() {
     init();
   }, []);
 
+  useEffect(() => {
+    refreshCartCount();
+  }, [currentUser]);
+
   const handleSelectProduct = (id) => {
     setSelectedProductId(id);
     setCurrentPage("product");
   };
+
+  const refreshCartCount = async () => {
+    if (!currentUser) {
+      setCartCount(0);
+      return;
+    }
+    try {
+      const items = await api.getCart();
+      setCartCount(items.length || 0);
+    } catch {
+      setCartCount(0);
+    }
+  };
+
 
   const renderPage = () => {
     if (currentPage === "home") {
@@ -57,6 +77,7 @@ function App() {
             setCurrentPage("chatDirect");
           }}
           currentUser={currentUser}
+          onCartChange={refreshCartCount}
         />
       );
     }
@@ -150,7 +171,7 @@ function App() {
     }
 
     if (currentPage === "cart") {
-      return <CartPage onSelectProduct={handleSelectProduct} />;
+      return <CartPage onSelectProduct={handleSelectProduct} onCartChange={refreshCartCount}/>;
     }
 
     return <div className="p-6">Page not found.</div>;
@@ -203,12 +224,17 @@ function App() {
           </button>
 
           {currentUser && (
-            <button
-              className="text-sm text-gray-700 hover:text-indigo-600 mx-2"
-              onClick={() => setCurrentPage("cart")}
-            >
-              Cart
-            </button>
+          <button
+            className="relative text-sm text-gray-700 hover:text-indigo-600 mx-2"
+            onClick={() => setCurrentPage("cart")}
+          >
+            Cart
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1">
+                {cartCount > 9 ? "9+" : cartCount}
+              </span>
+            )}
+          </button>
           )}
 
           {currentUser && (
@@ -227,6 +253,7 @@ function App() {
                 onClick={() => {
                   api.logout();
                   setCurrentUser(null);
+                  setCartCount(0); 
                   setCurrentPage("login");
                 }}
               >

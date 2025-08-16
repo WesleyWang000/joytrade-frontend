@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/realApi";
 
-function ProductDetailPage({ productId, onBack, onStartChat, currentUser }) {
+function ProductDetailPage({ productId, onBack, onStartChat, currentUser, onCartChange }) {
   const [product, setProduct] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showStatusSelect, setShowStatusSelect] = useState(false);
   const [error, setError] = useState("");
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -47,10 +48,15 @@ function ProductDetailPage({ productId, onBack, onStartChat, currentUser }) {
     try {
       await api.addToCart(productId);
       alert("Added to cart");
+      setAdded(true);
+      onCartChange && onCartChange();   
+      setTimeout(()=>setAdded(false), 1200);
     } catch (err) {
       alert("Add to cart failed: " + err.message);
     }
   };
+
+
 
   if (error) return <p className="p-6 text-red-500">{error}</p>;
   if (!product) return <p className="p-6">Loading...</p>;
